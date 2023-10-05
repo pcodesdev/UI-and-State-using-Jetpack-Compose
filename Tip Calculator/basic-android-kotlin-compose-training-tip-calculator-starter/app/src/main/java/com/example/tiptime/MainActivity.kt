@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -38,6 +39,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.tiptime.ui.theme.TipTimeTheme
@@ -89,9 +91,15 @@ EditedNumberField(modifier = Modifier
 fun EditedNumberField(modifier: Modifier=Modifier){
 //    make amount mutable
 //    use remember function to save state
-    var amountInput by remember {  mutableStateOf("")
+    var amountInput by remember {  mutableStateOf("") }
+//    The toDoubleOrNull() function is a predefined Kotlin function that parses a string as a Double number and returns the result or null if the string isn't a valid representation of a number
+/*
+Note: The ?: Elvis operator returns the expression that precedes it if the value isn't null and the expression that proceeds it when the value is null. It lets you write this code more idiomatically.
+ */
+        val amount = amountInput.toDoubleOrNull() ?: 0.0
+    var tip= calculateTip(amount)
 
-    }
+
     TextField(
         value = amountInput,
 /*
@@ -102,7 +110,12 @@ The onValueChange callback is triggered when the text box's input changes. In th
 In the onValueChange named parameter's lambda expression, set the amountInput.value property to the it variable:
  */
         onValueChange ={amountInput = it},
-        modifier = Modifier
+        modifier = Modifier,
+        label={ Text(stringResource(R.string.bill_amount)) },
+        singleLine = true,
+//        Set the keyboard type to number keyboard to input digits. Pass the KeyboardOptions function a keyboardType named parameter set to a KeyboardType.Number
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+
     )
 }
 
