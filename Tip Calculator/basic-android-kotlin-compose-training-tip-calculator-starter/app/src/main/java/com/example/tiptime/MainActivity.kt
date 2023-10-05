@@ -30,6 +30,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -68,7 +73,9 @@ fun TipTimeLayout() {
                 .padding(bottom = 16.dp)
                 .align(alignment = Alignment.Start)
         )
-EditedNumberField(modifier = Modifier.padding(bottom = 32.dp).fillMaxWidth())
+EditedNumberField(modifier = Modifier
+    .padding(bottom = 32.dp)
+    .fillMaxWidth())
 
         Text(
             text = stringResource(R.string.tip_amount, "Ksh 0.00"),
@@ -80,10 +87,21 @@ EditedNumberField(modifier = Modifier.padding(bottom = 32.dp).fillMaxWidth())
 
 @Composable
 fun EditedNumberField(modifier: Modifier=Modifier){
-    val amountInput="0"
+//    make amount mutable
+//    use remember function to save state
+    var amountInput by remember {  mutableStateOf("")
+
+    }
     TextField(
         value = amountInput,
-        onValueChange ={},
+/*
+Compose keeps track of each composable that reads state value properties and triggers a recomposition when its value changes.
+
+The onValueChange callback is triggered when the text box's input changes. In the lambda expression, the it variable contains the new value.
+
+In the onValueChange named parameter's lambda expression, set the amountInput.value property to the it variable:
+ */
+        onValueChange ={amountInput = it},
         modifier = Modifier
     )
 }
