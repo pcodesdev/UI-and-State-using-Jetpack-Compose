@@ -64,6 +64,10 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun TipTimeLayout() {
+    var amountInput by remember { mutableStateOf("") }
+    val amount = amountInput.toDoubleOrNull() ?: 0.0
+    val tip = calculateTip(amount)
+
     Column(
         modifier = Modifier.padding(40.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -75,12 +79,15 @@ fun TipTimeLayout() {
                 .padding(bottom = 16.dp)
                 .align(alignment = Alignment.Start)
         )
-EditedNumberField(modifier = Modifier
-    .padding(bottom = 32.dp)
-    .fillMaxWidth())
-
+        EditNumberField(
+            value = amountInput,
+            onValueChange = { amountInput = it },
+            modifier = Modifier
+                .padding(bottom = 32.dp)
+                .fillMaxWidth()
+        )
         Text(
-            text = stringResource(R.string.tip_amount, "Ksh 0.00"),
+            text = stringResource(R.string.tip_amount, tip),
             style = MaterialTheme.typography.displaySmall
         )
         Spacer(modifier = Modifier.height(150.dp))
@@ -88,42 +95,20 @@ EditedNumberField(modifier = Modifier
 }
 
 @Composable
-fun EditedNumberField(modifier: Modifier=Modifier){
-//    make amount mutable
-//    use remember function to save state
-    var amountInput by remember {  mutableStateOf("") }
-//    The toDoubleOrNull() function is a predefined Kotlin function that parses a string as a Double number and returns the result or null if the string isn't a valid representation of a number
-/*
-Note: The ?: Elvis operator returns the expression that precedes it if the value isn't null and the expression that proceeds it when the value is null. It lets you write this code more idiomatically.
- */
-        val amount = amountInput.toDoubleOrNull() ?: 0.0
-    var tip= calculateTip(amount)
-
-
+fun EditNumberField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
     TextField(
-        value = amountInput,
-/*
-Compose keeps track of each composable that reads state value properties and triggers a recomposition when its value changes.
-
-The onValueChange callback is triggered when the text box's input changes. In the lambda expression, the it variable contains the new value.
-
-In the onValueChange named parameter's lambda expression, set the amountInput.value property to the it variable:
- */
-        onValueChange ={amountInput = it},
-        modifier = Modifier,
-        label={ Text(stringResource(R.string.bill_amount)) },
+        value = value,
+        onValueChange = onValueChange,
         singleLine = true,
-//        Set the keyboard type to number keyboard to input digits. Pass the KeyboardOptions function a keyboardType named parameter set to a KeyboardType.Number
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-
+        label = { Text(stringResource(R.string.bill_amount)) },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        modifier = modifier
     )
 }
-
-/**
- * Calculates the tip based on the user input and format the tip amount
- * according to the local currency.
- * Example would be "$10.00".
- */
 private fun calculateTip(amount: Double, tipPercent: Double = 15.0): String {
     val tip = tipPercent / 100 * amount
     return NumberFormat.getCurrencyInstance().format(tip)
